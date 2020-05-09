@@ -24,7 +24,7 @@ def restart():
 
 def get_latest():
     data = urlopen(
-        "https://raw.githubusercontent.com/BHBHD/johnthepsychic/master/.version"
+        "https://raw.githubusercontent.com/BHBHD/Songwriters/master/.version"
     )
     for line in data:
         latest = line.decode()
@@ -56,7 +56,7 @@ class Owner(commands.Cog, name='Owner'):
         if new_version:
             print(
                 f"An update is available. Download Reaction Light v{new_version} at "
-                f"https://github.com/BHBHD/johnthepsychic "
+                f"https://github.com/BHBHD/Songwriters "
                 f"or simply use `!update` (only works with git installations).\n\n"
             )
 

@@ -61,12 +61,12 @@ class Intro(commands.Cog, name='Introduction'):
         e = await self.change_embed(user_intro, userData[2], discord.Color.green(), member)
         e.add_field(name=f"*Approved By:* ", value=f"{staff.name}")
         e.add_field(name=f"*Note:* ", value=f"Ayy, Now you have full access of this server. Enjoy your stay! :D")
-        await user_intro.edit(embed=e)
+        await user_intro.edit(content=f"{member.mention}", embed=e)
         e = await self.change_embed(staff_intro, userData[2], discord.Color.green(), member)
         e.add_field(name=f"*Approved By:* ", value=f"{staff.name}")
         e.add_field(name=f"*Note:* ", value=f"Tell them to be active!")
         await staff_intro.clear_reactions()
-        await staff_intro.edit(embed=e)
+        await staff_intro.edit(content=f"{member.mention}", embed=e)
         cur.execute(f"UPDATE introductions SET state = 'Approved', staff_id = {staff.id} WHERE user_id = {member.id}")
         conn.commit()
         cur.close()
@@ -89,12 +89,12 @@ class Intro(commands.Cog, name='Introduction'):
         e.add_field(name=f"*Denied By:* ", value=f"{staff.name}")
         e.add_field(name=f"*Note:* ", value=f"Well, They can re-introduce help them with syntax! :expressionless:")
         await staff_intro.clear_reactions()
-        await staff_intro.edit(embed=e)
+        await staff_intro.edit(content=f"{member.mention}", embed=e)
         e = await self.change_embed(user_intro, userData[2], discord.Color.red(), member)
         e.add_field(name=f"*Denied By:* ", value=f"{staff.name}")
         e.add_field(name=f"*Note:* ", value=f"You can just re-introduce your self with proper 'syntax'")
         await user_intro.clear_reactions()
-        await user_intro.edit(embed=e)
+        await user_intro.edit(content=f"{member.mention}", embed=e)
         cur.execute(f"DELETE FROM introductions WHERE user_id = {member.id}")
         conn.commit()
         cur.close()
@@ -131,7 +131,7 @@ class Intro(commands.Cog, name='Introduction'):
         e.add_field(name="*Note:* ", value=f"Only one member allowed to react. You cannot un-react the emoji "
                                            f"to undo what you have done so be careful.")
 
-        staff = await staff_channel.send(embed=e)
+        staff = await staff_channel.send(f"{message.author.mention}", embed=e)
         return embed, staff
 
     async def edit_embed(self, idS, newMsg, message):
@@ -192,7 +192,7 @@ class Intro(commands.Cog, name='Introduction'):
         await staff_intro.clear_reactions()
 
         e = await self.change_embed(staff_intro, userData[2], discord.Color.red(), member)
-        e.add_field(name=f"*Note:* ", value=f"This might left the server or you react the Dust-Bin! :triumph:")
+        e.add_field(name=f"*Note:* ", value=f"They might left the server, or you react with Dust-Bin! :triumph:")
         await staff_intro.edit(embed=e)
         cur.execute(f"DELETE FROM introductions WHERE user_id = {member.id}")
         conn.commit()
@@ -265,8 +265,12 @@ class Intro(commands.Cog, name='Introduction'):
     @commands.guild_only()
     async def on_member_join(self, member):
         """This listener is suppose to give a role to a new user on arrival."""
+        channel = discord.utils.get(member.guild.channels, id=INTRODUCTION_CHANNEL_ID)
         role = discord.utils.get(member.guild.roles, id=INTRODUCTION_ROLE_ID)
         await member.add_roles(role)
+        await channel.send(f"Hey {member.mention}, Please introduce yourself here it will give you "
+                           f"full access of this server! (See the pin)",
+                           delete_after=300)
         self.bot._prev_events.append("on_member_join - introduction.py")
 
     @commands.Cog.listener()

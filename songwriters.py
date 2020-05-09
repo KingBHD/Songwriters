@@ -91,15 +91,16 @@ class songwriter(commands.AutoShardedBot):
         try:
             super().run(parser.get('discord', 'token'), reconnect=True)
         finally:
-            with open('logs/prev_events.log', 'w', encoding='utf-8') as fp:
-                for data in self._prev_events:
-                    try:
-                        x = json.dumps(data, ensure_ascii=True, indent=4)
-                    except Exception as e:
-                        fp.write(f'{data}\n')
-                        print(f'Data written in {fp} with Exception{e}')
-                    else:
-                        fp.write(f'{x}\n')
+            pass
+            # with open('logs/prev_events.log', 'w', encoding='utf-8') as fp:
+            #     for data in self._prev_events:
+            #         try:
+            #             x = json.dumps(data, ensure_ascii=True, indent=4)
+            #         except Exception as e:
+            #             fp.write(f'{data}\n')
+            #             print(f'Data written in {fp} with Exception{e}')
+            #         else:
+            #             fp.write(f'{x}\n')
 
     @property
     def config(self):
