@@ -5,6 +5,7 @@ from .utils import checks
 import logging
 import sqlite3
 import discord
+import random
 import re
 
 conn = sqlite3.connect('src/songwriters.db')
@@ -259,7 +260,22 @@ class Intro(commands.Cog, name='Introduction'):
         e.description = f"Introduction Channel: {channel.mention}\n" \
                         f"Introduction Role: {role.mention}"
         await ctx.send(embed=e)
-
+    
+    @commands.command(name='8ball', description="Answers a yes/no question.", brief="Answers from the beyond.", aliases=['eight_ball', 'eightball', '8-ball'])
+    async def eightball(self, ctx):
+        possible_responses = [
+            'Ask someone else',
+            'Can\'t tell you right now',
+            'No',
+            'Yes',
+            'Go ask <@!445597916023750657>',
+            'That is a horrible idea',
+            'Maybe Tomorrow',
+            'Are you Insane?',
+            'Google could\'nt even tell you that one!',
+        ]
+        await ctx.send(f"`@{ctx.author.name}` {random.choice(possible_responses)}")
+    
     # Listeners
     @commands.Cog.listener()
     @commands.guild_only()

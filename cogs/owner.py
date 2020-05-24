@@ -1,5 +1,5 @@
+# !/usr/bin/python3
 from sys import platform, exit as shutdown
-from urllib.request import urlopen
 from discord.ext import commands
 from datetime import datetime
 from discord.ext import tasks
@@ -105,8 +105,8 @@ class Owner(commands.Cog, name='Owner'):
                     self.bot.reload_extension(ext)
                 log.debug(f'User: {ctx.author} (ID: {ctx.author.id}) - Successfully to Reload all!')
             except Exception as e:
-                self.bot.log.error(f"ERROR: FAILED to load extension: {ext}")
-                self.bot.log.error(f"\t{e.__class__.__name__}: {e}\n")
+                log.error(f"ERROR: FAILED to load extension: {ext}")
+                log.error(f"\t{e.__class__.__name__}: {e}\n")
 
     @commands.command(name='shutdown', aliases=["sd", "kill", "quit"], hidden=True)
     @commands.is_owner()
@@ -230,7 +230,7 @@ class Owner(commands.Cog, name='Owner'):
     async def update(self, ctx):
         if platform != "win32":
             await ctx.send("Attempting update...")
-            os.chdir(directory)
+            # os.chdir(directory)
             cmd = os.popen("git fetch")
             cmd.close()
             cmd = os.popen("git pull")
