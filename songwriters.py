@@ -9,6 +9,7 @@ import datetime
 import logging
 import discord
 import aiohttp
+import sqlite3
 import json
 import sys
 import csv
@@ -21,7 +22,7 @@ ACTIVITY_INTERVAL = parser.getint('default', 'activity-change-time-interval')
 description = "A discord bot made py ɃĦɃĦĐ#2224 using discord.py API by Rapptz"
 activities = []
 initial_extensions = ['cogs.owner', 'cogs.errors',
-                      'cogs.introduction']
+                      'cogs.introduction', 'cogs.information']
 
 with open("src/activities.csv", "r", encoding='utf-8') as f:
     reader = csv.reader(f, delimiter=",")
@@ -32,15 +33,18 @@ with open("src/activities.csv", "r", encoding='utf-8') as f:
 activities = cycle(activities)
 
 
-class songwriter(commands.AutoShardedBot):
+class Songwriter(commands.AutoShardedBot):
 
     def __init__(self):
         super().__init__(command_prefix=(parser.get('default', 'prefix')), description=description,
                          owner_id=parser.getint('discord', 'owner-id'), case_insensitive=False)
         self.session = aiohttp.ClientSession(loop=self.loop)
+        self.conn = sqlite3.connect('src/songwriters.db')
         self.uptime = datetime.datetime.utcnow()
+        self.log = logging.getLogger(__name__)
         self._prev_events = deque(maxlen=10)
         self.cogsList = initial_extensions
+        self.cur = self.conn.cursor()
         self.color = 0x95efcc
 
         for extension in initial_extensions:
@@ -91,16 +95,15 @@ class songwriter(commands.AutoShardedBot):
         try:
             super().run(parser.get('discord', 'token'), reconnect=True)
         finally:
-            pass
-            # with open('logs/prev_events.log', 'w', encoding='utf-8') as fp:
-            #     for data in self._prev_events:
-            #         try:
-            #             x = json.dumps(data, ensure_ascii=True, indent=4)
-            #         except Exception as e:
-            #             fp.write(f'{data}\n')
-            #             print(f'Data written in {fp} with Exception{e}')
-            #         else:
-            #             fp.write(f'{x}\n')
+            with open('logs/prev_events.log', 'w', encoding='utf-8') as fp:
+                for data in self._prev_events:
+                    try:
+                        x = json.dumps(data, ensure_ascii=True, indent=4)
+                    except Exception as e:
+                        fp.write(f'{data}\n')
+                        print(f'Data written in {fp} with Exception{e}')
+                    else:
+                        fp.write(f'{x}\n')
 
     @property
     def config(self):

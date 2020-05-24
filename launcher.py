@@ -1,11 +1,7 @@
-from configparser import ConfigParser
-from songwriters import songwriter
+from songwriters import Songwriter
 import contextlib
 import logging
 import click
-
-parser = ConfigParser()
-parser.read('bot-config.ini')
 
 
 @contextlib.contextmanager
@@ -43,7 +39,7 @@ def setup_logging():
 
 
 def run_bot():
-    bot = songwriter()
+    bot = Songwriter()
     bot.run()
 
 

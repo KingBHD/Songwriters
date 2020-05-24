@@ -213,8 +213,6 @@ class Intro(commands.Cog, name='Introduction'):
                         f"many channels and limit there access to limited channels like <#587969535802474511>"
 
         e.add_field(name="*Commands:* ", value=f"> `{ctx.prefix}role` - Create a new introduction role.\n"
-                                               f"> `{ctx.prefix}show <member#1234>` - Show there introduction, "
-                                               f"and staff who responsible for approval\n"
                                                f"> `{ctx.prefix}info` - Show the channel and role set for the "
                                                f"introduction'")
         await ctx.send(embed=e)
@@ -236,15 +234,6 @@ class Intro(commands.Cog, name='Introduction'):
         e.description = f'\u2705 **`SUCCESS`**: Role CREATED: `{role.name} (ID: {role.id})`'
         await msg.edit(embed=e)
         log.debug(f'User: {ctx.author} (ID: {ctx.author.id}) - Create a new introduction role!')
-
-    @intro_group.command(name='show', aliases=['s'])
-    async def intro_show(self, ctx, member: discord.User):
-        """Show the user's introduction message and who approved with various other details about the user."""
-        e = discord.Embed(color=self.bot.color)
-        e.set_author(name=self.bot.user.name, icon_url=self.bot.user.avatar_url)
-        e.timestamp = datetime.utcnow()
-
-        # TODO: Add introduction show.
 
     @intro_group.command(name='info', aliases=['information', 'details'])
     async def intro_info(self, ctx):
