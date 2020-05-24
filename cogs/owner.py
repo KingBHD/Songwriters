@@ -22,43 +22,38 @@ def restart():
     cmd.close()
 
 
-def get_latest():
-    data = urlopen(
-        "https://raw.githubusercontent.com/BHBHD/Songwriters/master/.version"
-    )
-    for line in data:
-        latest = line.decode()
-        break
-    return latest
-
-
-def check_for_updates():
-    # Get latest version from GitHub repo and checks it against the current one
-    latest = get_latest()
-    if latest > __version__:
-        return latest
-    return False
-
-
 class Owner(commands.Cog, name='Owner'):
     """Owner-only commands that make the bot dynamic."""
 
     def __init__(self, bot):
         self.bot = bot
+        # self.updates.start()
+
+    async def get_latest(self):
+        data = await self.bot.session.get(
+            "https://raw.githubusercontent.com/BHBHD/Songwriters/master/.version"
+        )
+        res = await data.text()
+        return res
+
+    async def check_for_updates(self):
+        # Get latest version from GitHub repo and checks it against the current one
+        latest = await self.get_latest()
+        if latest > __version__:
+            return latest
+        return False
 
     def get_bot_uptime(self, *, brief=False):
         return time.human_timedelta(self.bot.uptime, accuracy=None, brief=brief, suffix=False)
 
-    @tasks.loop(seconds=86400)
+    @tasks.loop(seconds=30)
     async def updates(self):
         # Sends a reminder once a day if there are updates available
-        new_version = check_for_updates()
+        new_version = await self.check_for_updates()
         if new_version:
-            print(
-                f"An update is available. Download Reaction Light v{new_version} at "
-                f"https://github.com/BHBHD/Songwriters "
-                f"or simply use `!update` (only works with git installations).\n\n"
-            )
+            print(f"An update is available. Download Songwriters v{new_version} at "
+                  f"https://github.com/BHBHD/Songwriters "
+                  f"or simply use `!update` (only works with git installations).\n\n")
 
     @commands.command(hidden=True)
     async def load(self, ctx, *, module):
@@ -240,15 +235,15 @@ class Owner(commands.Cog, name='Owner'):
             cmd.close()
             cmd = os.popen("git pull")
             cmd.close()
-            restart()
+            # restart()
             await ctx.send("Restarting...")
-            shutdown()  # sys.exit()
+            # shutdown()  # sys.exit()
         else:
             await ctx.send("I cannot do this on Windows.")
 
     @commands.command(name="version")
     async def print_version(self, ctx):
-        latest = get_latest()
+        latest = await self.get_latest()
         await ctx.send(f"I am currently running v{__version__}. The latest available version is v{latest}.")
 
 
