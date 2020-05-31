@@ -149,16 +149,21 @@ class Intro(commands.Cog, name='Introduction'):
             cur = conn.cursor()
             cur.execute(f"SELECT * FROM introductions WHERE user_id = {message.author.id}")
             user = cur.fetchone()
+
+            remove_q = re.sub(r"'", r"\'", message.content)
+            clear_msg = re.sub(r'"', r'\"', remove_q)
+
             if user is None:
                 await message.delete()
-                embed, staff = await self.embed(message, message.content)
+                embed, staff = await self.embed(message, clear_msg)
+
                 cur.execute(f'INSERT INTO introductions (state, msg, embed_id, user_id, staff_embed_id) '
-                            f'VALUES ("Pending", "{message.content}", {embed.id}, {message.author.id}, {staff.id})')
+                            f'VALUES ("Pending", "{clear_msg}", {embed.id}, {message.author.id}, {staff.id})')
                 conn.commit()
                 await add_reaction(embed, staff)
             elif user is not None:
-                if patten.match(message.content):
-                    data = patten.match(message.content)
+                if patten.match(clear_msg):
+                    data = patten.match(clear_msg)
                     await message.delete()
                     cur = conn.cursor()
                     cur.execute(f'SELECT embed_id, staff_embed_id FROM introductions '
