@@ -150,8 +150,8 @@ class Intro(commands.Cog, name='Introduction'):
             cur.execute(f"SELECT * FROM introductions WHERE user_id = {message.author.id}")
             user = cur.fetchone()
 
-            remove_q = re.sub(r"'", r"\'", message.content)
-            clear_msg = re.sub(r'"', r'\"', remove_q)
+            remove_q = re.sub(r"'", r"", message.content)
+            clear_msg = re.sub(r'"', r'', remove_q)
 
             if user is None:
                 await message.delete()
